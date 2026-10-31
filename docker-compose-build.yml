@@ -5,29 +5,23 @@ services:
     image: node:alpine
     container_name: bos-frontend-build-bot
     restart: "no"
-    working_dir: /app
     volumes:
-      - /mnt/sdb/www:/app/dist_host
+      # Memetakan langsung folder hasil build ke host
+      - /mnt/sdb/www:/mnt/sdb/www
     command: >
       sh -c "
-      echo '=== 1. MENYIAPKAN RUANG KERJA ===' &&
-      # Membersihkan folder /app dengan aman tanpa menyentuh folder mount dist_host
-      find . -mindepth 1 -maxdepth 1 ! -name 'dist_host' -exec rm -rf {} + &&
+      echo '=== 1. MEMERIKSA POSISI SOURCE CODE ===' &&
+      pwd && ls -la &&
       
-      echo '=== 2. MENARIK SOURCE CODE DARI GIT ===' &&
-      cp -R /var/lib/docker/volumes/*/_data/. . 2>/dev/null || cp -R ./* . 2>/dev/null || true &&
-      
-      echo '=== 3. MENGINSTAL DEPENDENCIES FRONTEND ===' &&
+      echo '=== 2. MENGINSTAL DEPENDENCIES FRONTEND ===' &&
       npm install &&
       
-      echo '=== 4. PROSES NPM RUN BUILD ===' &&
+      echo '=== 3. PROSES NPM RUN BUILD ===' &&
       npm run build &&
       
-      echo '=== 5. MEMINDAHKAN HASIL BUILD KE /mnt/sdb/www ===' &&
-      # Membersihkan isi dalam /mnt/sdb/www, bukan foldernya
-      rm -rf /app/dist_host/* &&
-      # Menyalin folder dist hasil build Vite ke folder host
-      cp -r dist/* /app/dist_host/ &&
+      echo '=== 4. MEMINDAHKAN HASIL BUILD KE /mnt/sdb/www ===' &&
+      rm -rf /mnt/sdb/www/* &&
+      cp -r dist/* /mnt/sdb/www/ || cp -r build/* /mnt/sdb/www/ &&
       
       echo '=== SUCCESS: BUILD SELESAI & OUTPUT SUDAH MASUK KE /mnt/sdb/www ==='
       "

@@ -4,7 +4,7 @@ services:
   # 1. DATABASE POSTGRESQL
   postgres-home:
     image: postgres:alpine
-    container_name: posdb-v2
+    container_name: posdb
     restart: unless-stopped
     environment:
       POSTGRES_DB: maydb
@@ -21,27 +21,13 @@ services:
         limits:
           memory: 100M
 
-  # 2. ADMINER MANAGEMENT
-  adminer-web:
-    image: adminer:latest
-    container_name: adminer-web-v2
-    restart: unless-stopped
-    ports:
-      - "8888:8080"
-    networks:
-      - mydb_may-network
-    deploy:
-      resources:
-        limits:
-          memory: 30M
-
-  # 3. NODE.JS BACKEND
+  # 2. NODE.JS BACKEND (Penyedia API untuk React)
   bos-backend:
     image: node:alpine
     container_name: bos-api
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5000:5000"  # <--- Port ini yang akan ditembak oleh React Anda
     environment:
       DB_USER: "amy"
       DB_HOST: "postgres-home"

@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # 1. DATABASE POSTGRESQL (Sudah Fix)
+  postgres-home:
+    image: postgres:alpine
+    container_name: posdb
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maydb
+      POSTGRES_USER: amy
+      POSTGRES_PASSWORD: amy123
+    volumes:
+      - postgres_home_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mydb_may-network # Disesuaikan dengan nama network stack Portainer Anda
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+
+  # 2. ADMINER MANAGEMENT (Sudah Fix)
+  adminer-web:
+    image: adminer:latest
+    container_name: database
+    restart: unless-stopped
+    ports:
+      - "8888:8080"
+    networks:
+      - mydb_may-network
+    deploy:
+      resources:
+        limits:
+          memory: 30M
+
+  # 3. NODE.JS BACKEND (Jembatan Baru Antara React & Postgres)
+  bos-backend:
+    image: node:alpine
+    container_name: bos-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_USER=amy
+      - DB_HOST=postgres-home # Menggunakan nama servis sebagai host internal Docker
+      - DB_NAME=maydb
+      - DB_PASSWORD=amy123
+      - DB_PORT=5432
+    networks:
+      - mydb_may-network
+    # Perintah kilat membuat server API tanpa perlu membuat folder manual di VS Code
+    command: >
+      sh -c "npm install express pg cors && node -e \"
+      const express = require('express');
+      const { Pool } = require('pg');
+      const cors = require('cors');
+      const app = express();
+      app.use(cors()); app.use(express.json());
+      const pool = new Pool({ user: 'amy', host: 'postgres-home', database: 'maydb', password: 'amy123', port: 5432 });
+      
+      // Mengotomatiskan pembuatan tabel users saat server pertama kali menyala
+      pool.query('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, password TEXT)');
+      
+      // API Pendaftaran Akun Baru dari /bos/input
+      app.post('/api/register', async (req, res) => {
+        try {
+          const { id, password } = req.body;
+          await pool.query('INSERT INTO users (id, password) VALUES (\\$1, \\$2)', [id, password]);
+          res.json({ success: true, message: 'Tersimpan di Postgres!' });
+        } catch (err) { res.status(500).json({ error: err.message }); }
+      });
+
+      // API Pengecekan Login untuk /bos/login
+      app.post('/api/login', async (req, res) => {
+        const { id, password } = req.body;
+        const result = await pool.query('SELECT * FROM users WHERE id = \\$1 AND password = \\$2', [id, password]);
+        if (result.rows.length > 0) res.json({ success: true });
+        else res.status(401).json({ success: false });
+      });
+      app.listen(5000, () => console.log('Backend Jalan di Port 5000'));
+      \""
+
+networks:
+  mydb_may-network:
+    external: true # Memakai network bridge yang sudah ada di Portainer Anda

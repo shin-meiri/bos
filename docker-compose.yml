@@ -35,7 +35,7 @@ services:
         limits:
           memory: 30M
 
-  # 3. NODE.JS BACKEND (Format Environment & Query Diperbaiki)
+  # 3. NODE.JS BACKEND
   bos-backend:
     image: node:alpine
     container_name: bos-api
@@ -82,7 +82,7 @@ services:
 
 networks:
   mydb_may-network:
-    name: mydb_may-network
+    external: true
 
 volumes:
   postgres_home_data:

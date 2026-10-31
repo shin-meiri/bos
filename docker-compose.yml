@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. DATABASE POSTGRESQL (Nama unik bebas bentrok)
+  # 1. DATABASE POSTGRESQL
   postgres-home:
     image: postgres:alpine
     container_name: posdb-v2
@@ -21,7 +21,7 @@ services:
         limits:
           memory: 100M
 
-  # 2. ADMINER MANAGEMENT (Sudah diperbaiki dari nama "/database" yang bentrok)
+  # 2. ADMINER MANAGEMENT
   adminer-web:
     image: adminer:latest
     container_name: adminer-web-v2
@@ -35,7 +35,7 @@ services:
         limits:
           memory: 30M
 
-  # 3. NODE.JS BACKEND (Jembatan API Antara React & Postgres)
+  # 3. NODE.JS BACKEND (Format Environment & Query Diperbaiki)
   bos-backend:
     image: node:alpine
     container_name: bos-api
@@ -43,13 +43,15 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DB_USER=amy
-      - DB_HOST=postgres-home
-      - DB_NAME=maydb
-      - DB_PASSWORD=amy123
-      - DB_PORT=5432
+      DB_USER: "amy"
+      DB_HOST: "postgres-home"
+      DB_NAME: "maydb"
+      DB_PASSWORD: "amy123"
+      DB_PORT: 5432
     networks:
       - mydb_may-network
+    depends_on:
+      - postgres-home
     command: >
       sh -c "npm install express pg cors && node -e \"
       const express = require('express');
@@ -64,14 +66,14 @@ services:
       app.post('/api/register', async (req, res) => {
         try {
           const { id, password } = req.body;
-          await pool.query('INSERT INTO users (id, password) VALUES (\\$1, \\$2)', [id, password]);
+          await pool.query('INSERT INTO users (id, password) VALUES (\$1, \$2)', [id, password]);
           res.json({ success: true, message: 'Tersimpan di Postgres!' });
         } catch (err) { res.status(500).json({ error: err.message }); }
       });
 
       app.post('/api/login', async (req, res) => {
         const { id, password } = req.body;
-        const result = await pool.query('SELECT * FROM users WHERE id = \\$1 AND password = \\$2', [id, password]);
+        const result = await pool.query('SELECT * FROM users WHERE id = \$1 AND password = \$2', [id, password]);
         if (result.rows.length > 0) res.json({ success: true });
         else res.status(401).json({ success: false });
       });
@@ -80,9 +82,8 @@ services:
 
 networks:
   mydb_may-network:
-    external: true
+    name: mydb_may-network
 
 volumes:
   postgres_home_data:
-    external: true
     name: mydb_postgres_home_data

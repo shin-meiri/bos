@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - mydb_may-network # Disesuaikan dengan nama network stack Portainer Anda
+      - mydb_may-network
     deploy:
       resources:
         limits:
@@ -44,13 +44,12 @@ services:
       - "5000:5000"
     environment:
       - DB_USER=amy
-      - DB_HOST=postgres-home # Menggunakan nama servis sebagai host internal Docker
+      - DB_HOST=postgres-home
       - DB_NAME=maydb
       - DB_PASSWORD=amy123
       - DB_PORT=5432
     networks:
       - mydb_may-network
-    # Perintah kilat membuat server API tanpa perlu membuat folder manual di VS Code
     command: >
       sh -c "npm install express pg cors && node -e \"
       const express = require('express');
@@ -60,10 +59,8 @@ services:
       app.use(cors()); app.use(express.json());
       const pool = new Pool({ user: 'amy', host: 'postgres-home', database: 'maydb', password: 'amy123', port: 5432 });
       
-      // Mengotomatiskan pembuatan tabel users saat server pertama kali menyala
       pool.query('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, password TEXT)');
       
-      // API Pendaftaran Akun Baru dari /bos/input
       app.post('/api/register', async (req, res) => {
         try {
           const { id, password } = req.body;
@@ -72,7 +69,6 @@ services:
         } catch (err) { res.status(500).json({ error: err.message }); }
       });
 
-      // API Pengecekan Login untuk /bos/login
       app.post('/api/login', async (req, res) => {
         const { id, password } = req.body;
         const result = await pool.query('SELECT * FROM users WHERE id = \\$1 AND password = \\$2', [id, password]);
@@ -84,4 +80,10 @@ services:
 
 networks:
   mydb_may-network:
-    external: true # Memakai network bridge yang sudah ada di Portainer Anda
+    external: true
+
+# FIX BAGIAN VOLUME DI BAWAH INI (Menggunakan volume eksternal mydb_postgres_home_data yang sudah ada di Portainer)
+volumes:
+  postgres_home_data:
+    external: true
+    name: mydb_postgres_home_data

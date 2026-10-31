@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. DATABASE POSTGRESQL (Diberikan paksaan jalur PGDATA lama)
+  # 1. DATABASE POSTGRESQL
   postgres-home:
     image: postgres:alpine
     container_name: posdb-v2
@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: maydb
       POSTGRES_USER: amy
       POSTGRES_PASSWORD: amy123
-      PGDATA: "/var/lib/postgresql/data"  # <--- SOLUSI: Memaksa kompatibilitas data lama Anda
+      PGDATA: "/var/lib/postgresql/data"
     volumes:
       - postgres_home_data:/var/lib/postgresql/data
     ports:
@@ -22,7 +22,7 @@ services:
         limits:
           memory: 100M
 
-  # 2. NODE.JS BACKEND
+  # 2. NODE.JS BACKEND + PROSES OTOMATIS BUILD FRONTEND
   bos-backend:
     image: node:alpine
     container_name: bos-api
@@ -40,10 +40,22 @@ services:
       - mydb_may-network
     depends_on:
       - postgres-home
+    volumes:
+      # PENTING: Memetakan folder host /mnt/sdb/www ke dalam container agar bisa diisi otomatis
+      - /mnt/sdb/www:/app/dist_host
     command: >
       sh -c "rm -rf /root/.npm/_cacache /root/.npm/_logs/* package-lock.json node_modules && 
       mkdir -p /app && cd /app && 
-      npm install express pg cors && node -e \"
+      npm install express pg cors && 
+      
+      echo '=== MEMULAI OTOMATISASI BUILD FRONTEND ===' &&
+      npm install && 
+      npm run build && 
+      mkdir -p /app/dist_host &&
+      cp -r dist/* /app/dist_host/ && 
+      echo '=== BUILD SELESAI & SUDAH DIPINDAHKAN KE /mnt/sdb/www ===' &&
+      
+      node -e \"
       const express = require('express');
       const { Pool } = require('pg');
       const cors = require('cors');

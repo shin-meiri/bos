@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend-builder:
+    image: node:alpine
+    container_name: bos-frontend-build-bot
+    # "no" memastikan container berhenti setelah selesai build (tidak memakan RAM server)
+    restart: "no"
+    working_dir: /app
+    volumes:
+      # Memetakan folder tujuan akhir di host server Anda
+      - /mnt/sdb/www:/app/dist_host
+    command: >
+      sh -c "
+      echo '=== 1. MENYIAPKAN RUANG KERJA ===' &&
+      rm -rf ./* &&
+      
+      echo '=== 2. MENARIK SOURCE CODE DARI GIT ===' &&
+      # Menyalin seluruh file proyek yang ditarik Portainer ke folder aktif /app
+      cp -R /var/lib/docker/volumes/*/_data/. . 2>/dev/null || cp -R ./* . 2>/dev/null || true &&
+      
+      echo '=== 3. MENGINSTAL DEPENDENCIES FRONTEND ===' &&
+      npm install &&
+      
+      echo '=== 4. PROSES NPM RUN BUILD ===' &&
+      npm run build &&
+      
+      echo '=== 5. MEMINDAHKAN HASIL BUILD KE /mnt/sdb/www ===' &&
+      rm -rf /app/dist_host/* &&
+      cp -r dist/* /app/dist_host/ || cp -r build/* /app/dist_host/ &&
+      
+      echo '=== SUCCESS: BUILD SELESAI & OUTPUT SUDAH MASUK KE /mnt/sdb/www ==='
+      "

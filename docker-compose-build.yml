@@ -6,12 +6,18 @@ services:
     container_name: bos-frontend-build-bot
     restart: "no"
     volumes:
-      # Memetakan langsung folder hasil build ke host
       - /mnt/sdb/www:/mnt/sdb/www
     command: >
       sh -c "
-      echo '=== 1. MEMERIKSA POSISI SOURCE CODE ===' &&
-      pwd && ls -la &&
+      echo '=== 1. MENCARI LOKASI REPOSITORI ===' &&
+      # Mencari folder yang berisi package.json di seluruh container
+      TARGET_DIR=\$(find / -name package.json -not -path '*/node_modules/*' -quit | sed 's/package.json//') &&
+      if [ -z \"\$TARGET_DIR\" ]; then
+        echo 'ERROR: package.json tidak ditemukan sama sekali di dalam container!';
+        exit 1;
+      fi &&
+      cd \"\$TARGET_DIR\" &&
+      echo \"Berhasil masuk ke direktori kode: \$(pwd)\" &&
       
       echo '=== 2. MENGINSTAL DEPENDENCIES FRONTEND ===' &&
       npm install &&
@@ -21,7 +27,14 @@ services:
       
       echo '=== 4. MEMINDAHKAN HASIL BUILD KE /mnt/sdb/www ===' &&
       rm -rf /mnt/sdb/www/* &&
-      cp -r dist/* /mnt/sdb/www/ || cp -r build/* /mnt/sdb/www/ &&
+      if [ -d 'dist' ]; then
+        cp -r dist/* /mnt/sdb/www/;
+      elif [ -d 'build' ]; then
+        cp -r build/* /mnt/sdb/www/;
+      else
+        echo 'ERROR: Folder hasil build (dist/build) tidak ditemukan!';
+        exit 1;
+      fi &&
       
       echo '=== SUCCESS: BUILD SELESAI & OUTPUT SUDAH MASUK KE /mnt/sdb/www ==='
       "

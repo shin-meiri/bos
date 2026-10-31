@@ -4,7 +4,7 @@ services:
   # 1. DATABASE POSTGRESQL
   postgres-home:
     image: postgres:alpine
-    container_name: posdb
+    container_name: posdb-v2
     restart: unless-stopped
     environment:
       POSTGRES_DB: maydb
@@ -21,13 +21,14 @@ services:
         limits:
           memory: 100M
 
-  # 2. NODE.JS BACKEND (Penyedia API untuk React)
+  # 2. NODE.JS BACKEND
   bos-backend:
     image: node:alpine
     container_name: bos-api
     restart: unless-stopped
+    working_dir: /app
     ports:
-      - "5000:5000"  # <--- Port ini yang akan ditembak oleh React Anda
+      - "5000:5000"
     environment:
       DB_USER: "amy"
       DB_HOST: "postgres-home"
@@ -39,7 +40,9 @@ services:
     depends_on:
       - postgres-home
     command: >
-      sh -c "npm install express pg cors && node -e \"
+      sh -c "rm -rf /root/.npm/_cacache /root/.npm/_logs/* package-lock.json node_modules && 
+      mkdir -p /app && cd /app && 
+      npm install express pg cors && node -e \"
       const express = require('express');
       const { Pool } = require('pg');
       const cors = require('cors');

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. DATABASE POSTGRESQL
+  # 1. DATABASE POSTGRESQL (Diberikan paksaan jalur PGDATA lama)
   postgres-home:
     image: postgres:alpine
     container_name: posdb-v2
@@ -10,6 +10,7 @@ services:
       POSTGRES_DB: maydb
       POSTGRES_USER: amy
       POSTGRES_PASSWORD: amy123
+      PGDATA: "/var/lib/postgresql/data"  # <--- SOLUSI: Memaksa kompatibilitas data lama Anda
     volumes:
       - postgres_home_data:/var/lib/postgresql/data
     ports:

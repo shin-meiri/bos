@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  # 1. DATABASE POSTGRESQL (Sudah Fix)
+  # 1. DATABASE POSTGRESQL (Nama unik bebas bentrok)
   postgres-home:
     image: postgres:alpine
-    container_name: posdb
+    container_name: posdb-v2
     restart: unless-stopped
     environment:
       POSTGRES_DB: maydb
@@ -21,10 +21,10 @@ services:
         limits:
           memory: 100M
 
-  # 2. ADMINER MANAGEMENT (Sudah Fix)
+  # 2. ADMINER MANAGEMENT (Sudah diperbaiki dari nama "/database" yang bentrok)
   adminer-web:
     image: adminer:latest
-    container_name: database
+    container_name: adminer-web-v2
     restart: unless-stopped
     ports:
       - "8888:8080"
@@ -35,7 +35,7 @@ services:
         limits:
           memory: 30M
 
-  # 3. NODE.JS BACKEND (Jembatan Baru Antara React & Postgres)
+  # 3. NODE.JS BACKEND (Jembatan API Antara React & Postgres)
   bos-backend:
     image: node:alpine
     container_name: bos-api
@@ -82,7 +82,6 @@ networks:
   mydb_may-network:
     external: true
 
-# FIX BAGIAN VOLUME DI BAWAH INI (Menggunakan volume eksternal mydb_postgres_home_data yang sudah ada di Portainer)
 volumes:
   postgres_home_data:
     external: true

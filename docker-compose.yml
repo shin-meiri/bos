@@ -22,7 +22,18 @@ services:
         limits:
           memory: 100M
 
-  # 2. NODE.JS BACKEND + PROSES OTOMATIS BUILD FRONTEND
+  # 2. LOCALHOST WEB SERVER (Kembali Dipasang untuk Atasi 502 Bad Gateway)
+  web-localhost:
+    image: nginx:alpine
+    container_name: web-localhost
+    restart: unless-stopped
+    volumes:
+      - /mnt/sdb/www:/usr/share/nginx/html:ro
+    networks:
+      - mydb_may-network
+    command: sh -c "printf 'server {\n    listen 80;\n    listen [::]:80;\n    server_name localhost;\n\n    location / {\n        root /usr/share/nginx/html;\n        index index.html;\n        try_files $$uri $$uri/ /index.html;\n    }\n\n    location /api/ {\n        proxy_pass http://bos-api:5000;\n        proxy_set_header Host $$host;\n    }\n}\n' > /tmp/fresh_nginx.conf && mv -f /tmp/fresh_nginx.conf /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+  # 3. NODE.JS BACKEND + PROSES OTOMATIS BUILD FRONTEND
   bos-backend:
     image: node:alpine
     container_name: bos-api
@@ -41,7 +52,6 @@ services:
     depends_on:
       - postgres-home
     volumes:
-      # PENTING: Memetakan folder host /mnt/sdb/www ke dalam container agar bisa diisi otomatis
       - /mnt/sdb/www:/app/dist_host
     command: >
       sh -c "rm -rf /root/.npm/_cacache /root/.npm/_logs/* package-lock.json node_modules && 

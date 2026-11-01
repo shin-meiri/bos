@@ -2,18 +2,22 @@ version: '3.8'
 
 services:
   frontend-builder:
-    image: node:alpine
+    # Melakukan build image lokal berdasarkan Dockerfile yang ada di Git
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: bos-frontend-build-bot
     restart: "no"
     volumes:
+      # Memetakan folder host server Anda
       - /mnt/sdb/www:/mnt/sdb/www
     command: >
       sh -c "
-      TARGET_SH=\$(find / -name build.sh -quit) &&
-      if [ -n \"\$TARGET_SH\" ]; then
-        chmod +x \"\$TARGET_SH\" && sh \"\$TARGET_SH\";
-      else
-        echo 'ERROR: File build.sh tidak ditemukan di Git!';
-        exit 1;
-      fi
+      echo '=== 1. MEMBERSIHKAN FOLDER HOST /mnt/sdb/www ===' &&
+      rm -rf /mnt/sdb/www/* &&
+      
+      echo '=== 2. MEMINDAHKAN HASIL BUILD BARU ===' &&
+      cp -r /app/html_output/* /mnt/sdb/www/ &&
+      
+      echo '=== SUCCESS: BUILD DOCKERFILE SELESAI & OUTPUT MASUK KE /mnt/sdb/www ==='
       "

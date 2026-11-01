@@ -1,16 +1,19 @@
 import { useEffect, useState, ComponentType } from 'react';
-import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import { HashRouter, Routes, Route, useParams } from 'react-router-dom';
 
 // Membaca folder src/bos/ secara otomatis
 const bosModules = import.meta.glob('/src/bos/**/*.{tsx,jsx}');
 
 function BosDynamicLoader() {
-  const { "*": fileName } = useParams();
+  // Mengambil sisa parameter rute wildcards
+  const params = useParams();
+  const fileName = params['*'];
+  
   const [Component, setComponent] = useState<ComponentType | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Jika tidak ada parameter (berarti akses root /), kita paksa muat Page.jsx
+    // Jika tidak ada parameter (akses /), otomatis membaca Page.jsx/tsx
     const targetName = fileName ? (fileName.charAt(0).toUpperCase() + fileName.slice(1)) : 'Page';
     
     const fullPath = `/src/bos/${targetName}.tsx`; 
@@ -22,7 +25,7 @@ function BosDynamicLoader() {
       setError(null);
       importFunction()
         .then((mod: any) => {
-          setComponent(() => mod.default || Object.values(mod));
+          setComponent(() => mod.default || Object.values(mod)[0]);
         })
         .catch(() => {
           setError(`Gagal memuat komponen: ${targetName}`);
@@ -41,14 +44,14 @@ function BosDynamicLoader() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
-        {/* 1. Jalur Otomatis untuk folder bos */}
+        {/* 1. Jalur Otomatis untuk folder bos menggunakan HashRouter */}
         <Route path="/bos/*" element={<BosDynamicLoader />} />
         
-        {/* 2. JALUR UTAMA (HOME /): Sekarang langsung memanggil BosDynamicLoader tanpa membawa nama file, sehingga otomatis membaca Page.jsx */}
+        {/* 2. JALUR UTAMA (HOME /) */}
         <Route path="/" element={<BosDynamicLoader />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

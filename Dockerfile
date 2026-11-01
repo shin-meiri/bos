@@ -6,8 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Tahap 2: Kontainer Minimalis untuk Menyalin Hasil Build
+# Tahap 2: Kontainer Akhir untuk Salin Data
 FROM alpine:latest
 WORKDIR /app
-# Menyalin hasil build dari Tahap 1 ke folder internal
 COPY --from=builder /app/dist ./html_output

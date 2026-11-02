@@ -8,9 +8,17 @@ RUN npm run build
 
 # Stage 2: Sajikan menggunakan Nginx
 FROM nginx:stable-alpine
-# Salin hasil build Vite ke direktori default Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
-# Salin konfigurasi custom Nginx jika ada (opsional, lihat langkah 2)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Membuat konfigurasi SPA langsung di dalam Dockerfile agar tidak butuh file nginx.conf eksternal
+RUN echo 'server { \
+    listen 80; \
+    location / { \
+        root /usr/share/nginx/html; \
+        index index.html index.htm; \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

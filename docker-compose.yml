@@ -1,12 +1,11 @@
+version: '3.8'
+
 services:
   vite-app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: vite_nginx_container
+    container_name: vite_production_container
     ports:
-      - "80:80"
-    volumes:
-      # Memetakan folder html kontainer ke direktori host eksternal /mnt/sdb/www
-      - /mnt/sdb/www:/usr/share/nginx/html
-    restart: unless-stopped
+      - "8080:80" # Aplikasi bisa diakses lewat port 8080 di server/lokal
+    restart: always

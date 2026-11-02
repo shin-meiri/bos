@@ -1,15 +1,16 @@
-# Stage 1: Build aplikasi
+# Stage 1: Build aplikasi Vite
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-# Instal semua dependensi termasuk devDependencies untuk kebutuhan build
-RUN npm ci 
+RUN npm ci
 COPY . .
-# Perintah yang menyebabkan error pada project Anda
-RUN npm run build 
+RUN npm run build
 
-# Stage 2: Production env
-FROM nginx:alpine
+# Stage 2: Sajikan menggunakan Nginx
+FROM nginx:stable-alpine
+# Salin hasil build Vite ke direktori default Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
+# Salin konfigurasi custom Nginx jika ada (opsional, lihat langkah 2)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

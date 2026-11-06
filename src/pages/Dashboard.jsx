@@ -10,10 +10,12 @@ export default function Dashboard() {
       return
     }
 
-    fetch('http://mayhost.com:8001/api/v1/auth/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    fetch('https://api.mayhost.com/api/v1/auth/me', {
+    headers: {
+    Authorization: `Bearer ${token}`,
+    },
+    })
+
     })
       .then((res) => res.json())
       .then((data) => setUser(data))

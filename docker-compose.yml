@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  web-vite:
+    build: .
+    container_name: web-localhost
+    restart: unless-stopped
+    networks:
+      - maynet
+
+networks:
+  maynet:
+    external: true

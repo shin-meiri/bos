@@ -15,8 +15,6 @@ export default function Dashboard() {
     Authorization: `Bearer ${token}`,
     },
     })
-
-    })
       .then((res) => res.json())
       .then((data) => setUser(data))
       .catch(() => {

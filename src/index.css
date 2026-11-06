@@ -31,6 +31,11 @@
 }
 @import "tailwindcss";
 
+/* Custom global style */
+body {
+  @apply bg-slate-950 text-white antialiased;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;

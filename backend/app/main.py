@@ -12,13 +12,17 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# CORS - sesuaikan dengan domain frontend nanti
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://mayhost.com"],  # Ganti dengan domain frontend di production
+    allow_origins=[
+        "http://mayhost.com",
+        "https://mayhost.com",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
-    allow_methods=["https://mayhost.com"],
-    allow_headers=["https://mayhost.com"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])

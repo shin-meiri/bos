@@ -1,24 +1,17 @@
-# --- Tahap 1: Kompilasi & Build dengan Node ---
+# --- Tahap 1: Build Vite ---
 FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Salin berkas package untuk instalasi dependensi
 COPY package*.json ./
 RUN npm ci
-
-# Salin seluruh kode proyek dan lakukan build
 COPY . .
 RUN npm run build
 
-# --- Tahap 2: Menjalankan Hasil Kompilasi dengan Nginx ---
+# --- Tahap 2: Nginx ---
 FROM nginx:alpine
-# Hapus halaman bawaan Nginx
 RUN rm -rf /usr/share/nginx/html/*
-
-# Salin hasil kompilasi dari tahap 1 ke folder Nginx
+# Menyalin hasil build dari tahap 1 ke folder Nginx internal
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Salin konfigurasi SPA Vite agar tidak eror saat refresh
+# Menyalin config routing SPA
 COPY default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

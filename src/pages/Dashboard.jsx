@@ -9,12 +9,12 @@ export default function Dashboard() {
       window.location.href = '?e=login'
       return
     }
-
     fetch('/api/v1/auth/me', {
       headers: {
-       Authorization: `Bearer ${token}`,
-     },
+      Authorization: `Bearer ${token}`,
+      },
     })
+
       .then((res) => res.json())
       .then((data) => setUser(data))
       .catch(() => {

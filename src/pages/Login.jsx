@@ -16,10 +16,10 @@ export default function Login() {
       formData.append('username', email)
       formData.append('password', password)
 
-      const res = await fetch('https://api.mayhost.com/api/v1/auth/login', {
-     method: 'POST',
-     body: formData,
-    })
+  const res = await fetch('/api/v1/auth/login', {
+    method: 'POST',
+    body: formData,
+  })
 
       const data = await res.json()
 

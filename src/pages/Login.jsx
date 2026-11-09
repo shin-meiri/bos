@@ -34,65 +34,96 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo / Brand */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white tracking-wide">
-            Shin Kairi
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#0a0e17]">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-[#0a0e17] to-[#0a0e17]"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+      
+      {/* Glow orbs */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-[100px]"></div>
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px]"></div>
+
+      <div className="relative z-10 w-full max-w-md px-6">
+        {/* Brand */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-black tracking-wider text-white">
+            SHIN <span className="text-indigo-400">KAIRI</span>
           </h1>
-          <p className="text-slate-400 text-sm mt-1">Corporate System</p>
+          <div className="mt-2 flex items-center justify-center gap-2">
+            <div className="h-px w-8 bg-indigo-500/50"></div>
+            <p className="text-indigo-300/80 text-xs tracking-[0.3em] uppercase">Corporate System</p>
+            <div className="h-px w-8 bg-indigo-500/50"></div>
+          </div>
         </div>
 
-        {/* Card */}
-        <div className="bg-slate-800/80 border border-slate-700 rounded-2xl shadow-2xl p-8 backdrop-blur">
-          <h2 className="text-xl font-semibold text-white mb-6 text-center">
-            Sign In
-          </h2>
+        {/* Login Card */}
+        <div className="relative">
+          {/* Border glow */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30"></div>
+          
+          <div className="relative bg-[#111827]/90 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-xl shadow-2xl">
+            <h2 className="text-center text-xl font-semibold text-white mb-6">
+              Sign In to Continue
+            </h2>
 
-          {error && (
-            <div className="mb-5 p-3 text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg">
-              {error}
-            </div>
-          )}
+            {error && (
+              <div className="mb-5 p-3 text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2">
+                <span>⚠</span> {error}
+              </div>
+            )}
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1.5">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full px-4 py-2.5 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                required
-              />
-            </div>
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1.5 tracking-wide">
+                  EMAIL ADDRESS
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full px-4 py-3 bg-slate-900/70 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm text-slate-400 mb-1.5">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-2.5 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1.5 tracking-wide">
+                  PASSWORD
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-slate-900/70 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition"
+                  required
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 mt-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-medium rounded-lg transition"
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 mt-2 font-semibold tracking-wide text-white rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 disabled:opacity-60"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                    </svg>
+                    Authenticating...
+                  </span>
+                ) : (
+                  'ENTER SYSTEM'
+                )}
+              </button>
+            </form>
+          </div>
         </div>
 
-        <p className="text-center text-slate-500 text-xs mt-6">
-          © 2026 Shin Kairi Corporate
+        <p className="text-center text-slate-600 text-xs mt-8">
+          © 2026 Shin Kairi Corporate • All Rights Reserved
         </p>
       </div>
     </div>

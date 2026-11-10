@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   web-vite:
     build:
@@ -8,7 +7,7 @@ services:
     container_name: web-localhost
     restart: unless-stopped
     ports:
-      - "80" # Membiarkan Docker memberikan port internal dinamis yang bisa diakses NPM lewat maynet
+      - "8080:80"  # Mengarahkan port 80 kontainer ke port 8080 server, atau gunakan "80:80"
     networks:
       - maynet
 

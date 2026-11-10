@@ -24,7 +24,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @import "tailwindcss";
+ @import "tailwindcss";
+
+@theme {
+  --color-brand-dark: #0f0a1a;
+  --color-brand-card: #1e1330;
+}
   @media (max-width: 1024px) {
     font-size: 16px;
   }

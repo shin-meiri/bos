@@ -11,7 +11,6 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
-
     try {
       const data = await login(email, password);
       localStorage.setItem('token', data.token);
@@ -24,8 +23,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f0a1a] flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-[#1e1330]/90 border border-purple-900/40 rounded-2xl p-8 shadow-2xl space-y-6">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full bg-purple-950/40 border border-purple-900/40 rounded-2xl p-8 shadow-2xl space-y-6 backdrop-blur-md">
         
         <div className="text-center space-y-2">
           <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-500 items-center justify-center font-bold text-white text-lg shadow-lg shadow-pink-500/30 mb-2">
@@ -50,7 +49,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full bg-[#0f0a1a] border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full bg-slate-900 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500"
             />
           </div>
 
@@ -62,14 +61,14 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-[#0f0a1a] border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full bg-slate-900 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500"
             />
           </div>
 
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30 hover:opacity-95 transition-all disabled:opacity-50"
+            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30 hover:opacity-95 disabled:opacity-50 transition-all"
           >
             {loading ? 'Processing...' : 'Log in'}
           </button>

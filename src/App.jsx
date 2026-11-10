@@ -1,41 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from './components/Head';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
-import Daftar from './pages/Daftar';
-import About from './pages/About';
-import Admin from './pages/Admin';
 
 export default function App() {
-  // Membaca parameter URL (contoh: ?e=login)
-  const urlParams = new URLSearchParams(window.location.search);
-  const page = urlParams.get('e') || 'home'; // Default ke 'home' jika parameter kosong
+  const [currentRoute, setCurrentRoute] = useState('home');
 
-  // Menentukan komponen halaman yang akan dirender
-  const renderPage = () => {
-    switch (page) {
-      case 'home':
-      case 'dashboard':
-        return <Dashboard />;
-      case 'login':
-        return <Login />;
-      case 'daftar':
-        return <Daftar />;
-      case 'about':
-        return <About />;
-      case 'admin':
-        return <Admin />;
-      default:
-        return <Dashboard />;
-    }
-  };
+  useEffect(() => {
+    const handleRouteChange = () => {
+      // Mendukung query parameter (?e=login) maupun hash (#login)
+      const params = new URLSearchParams(window.location.search);
+      let page = params.get('e');
+      
+      if (!page) {
+        const hash = window.location.hash.replace('#', '');
+        page = hash || 'home';
+      }
+      
+      setCurrentRoute(page.toLowerCase());
+    };
+
+    handleRouteChange();
+    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener('hashchange', handleRouteChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('hashchange', handleRouteChange);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0f0a1a] text-white flex flex-col justify-between selection:bg-pink-500 selection:text-white">
       <Head />
       <main className="flex-grow">
-        {renderPage()}
+        {(currentRoute === 'home' || currentRoute === 'dashboard') && <Dashboard />}
+        {currentRoute === 'login' && <Login />}
+        {/* Jika halaman tidak dikenali, fallback ke Dashboard agar tidak pernah kosong */}
+        {currentRoute !== 'home' && currentRoute !== 'dashboard' && currentRoute !== 'login' && <Dashboard />}
       </main>
       <Footer />
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, deleteUser, updateUser } from '../services/api'; // Sesuaikan path import api Anda
+import { getUsers, deleteUser, updateUser } from '../components/Konek';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);

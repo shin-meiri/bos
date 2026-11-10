@@ -1,82 +1,64 @@
-import React, { useState } from 'react';
-import { login } from '../components/Konek';
+import React from 'react';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-
-  const handleSubmit = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setLoading(true);
-    setErrorMsg('');
-    try {
-      const data = await login(email, password);
-      localStorage.setItem('token', data.token);
-      window.location.href = '?e=admin';
-    } catch (err) {
-      setErrorMsg(err.message || 'Login gagal, periksa kembali data Anda.');
-    } finally {
-      setLoading(false);
-    }
+    // Simulasi login sukses, arahkan ke CWP Area Admin
+    window.location.href = '?e=admin';
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-purple-950/40 border border-purple-900/40 rounded-2xl p-8 shadow-2xl space-y-6 backdrop-blur-md">
+    <div className="min-h-[calc(100vh-5rem)] bg-gradient-to-br from-[#2e1a47] via-[#1e1330] to-[#0f0a1a] flex items-center justify-center p-6 relative overflow-hidden">
+      
+      {/* Background Glow */}
+      <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="bg-[#1e1330]/90 backdrop-blur-xl border border-purple-500/30 p-8 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md relative z-10 text-center">
         
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-500 items-center justify-center font-bold text-white text-lg shadow-lg shadow-pink-500/30 mb-2">
-            📦
-          </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Welcome Back</h2>
-          <p className="text-xs text-purple-300/70">Sign in to your account</p>
+        <div className="w-16 h-16 bg-gradient-to-tr from-pink-500 to-purple-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-pink-500/30 mb-6">
+          <span className="text-2xl font-bold text-white">🔒</span>
         </div>
 
-        {errorMsg && (
-          <div className="bg-red-950/40 border border-red-800 text-red-300 text-xs p-3 rounded-lg text-center">
-            {errorMsg}
-          </div>
-        )}
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Welcome Back</h2>
+        <p className="text-purple-200/70 text-sm mt-1 mb-6">Sign in to your CWP Admin account</p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4 text-left">
           <div>
-            <label className="block text-xs font-medium text-purple-200 mb-1.5">Email / Username</label>
+            <label className="block text-xs font-semibold text-purple-200 mb-1.5 uppercase tracking-wider">Email / Username</label>
             <input 
               type="text" 
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@company.com"
-              className="w-full bg-slate-900 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500"
+              placeholder="name@company.com" 
+              className="w-full bg-[#0f0a1a]/80 border border-purple-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500 transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-purple-200 mb-1.5">Password</label>
+            <label className="block text-xs font-semibold text-purple-200 mb-1.5 uppercase tracking-wider">Password</label>
             <input 
               type="password" 
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full bg-slate-900 border border-purple-900/60 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500"
+              placeholder="••••••••" 
+              className="w-full bg-[#0f0a1a]/80 border border-purple-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-purple-400/40 focus:outline-none focus:border-pink-500 transition-all"
             />
           </div>
 
           <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30 hover:opacity-95 disabled:opacity-50 transition-all"
+            type="submit"
+            className="w-full py-3.5 rounded-xl font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30 hover:opacity-95 transform hover:-translate-y-0.5 transition-all mt-2"
           >
-            {loading ? 'Processing...' : 'Log in'}
+            Log in
           </button>
         </form>
 
-        <div className="text-center pt-2 border-t border-purple-900/40 text-xs text-purple-300/70 space-y-2">
-          <p>Don't have an account? <a href="?e=daftar" className="text-pink-400 font-medium hover:underline">Sign up</a></p>
-          <p><a href="?e=home" className="text-purple-400 hover:text-white transition-colors">&larr; Back to Home</a></p>
+        <div className="mt-6 text-sm text-purple-200/70">
+          Don't have an account? <a href="?e=daftar" className="text-pink-400 font-semibold hover:underline">Sign up</a>
+        </div>
+        
+        <div className="mt-4">
+          <a href="?e=home" className="text-xs text-purple-300/60 hover:text-purple-200 transition-colors">
+            ← Back to Home
+          </a>
         </div>
 
       </div>

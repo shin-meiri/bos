@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -26,10 +28,6 @@
   -moz-osx-font-smoothing: grayscale;
  @import "tailwindcss";
 
-@theme {
-  --color-brand-dark: #0f0a1a;
-  --color-brand-card: #1e1330;
-}
   @media (max-width: 1024px) {
     font-size: 16px;
   }

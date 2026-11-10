@@ -3,6 +3,7 @@ import Head from './components/Head';
 import Footer from './components/Footer';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import Daftar from './pages/Daftar';
 import Admin from './pages/Admin';
 
 export default function App() {
@@ -35,8 +36,9 @@ export default function App() {
       <main className="flex-grow">
         {(currentRoute === 'home' || currentRoute === 'dashboard') && <Dashboard />}
         {currentRoute === 'login' && <Login />}
+        {currentRoute === 'daftar' && <Daftar />}
         {currentRoute === 'admin' && <Admin />}
-        {currentRoute !== 'home' && currentRoute !== 'dashboard' && currentRoute !== 'login' && currentRoute !== 'admin' && <Dashboard />}
+        {currentRoute !== 'home' && currentRoute !== 'dashboard' && currentRoute !== 'login' && currentRoute !== 'daftar' && currentRoute !== 'admin' && <Dashboard />}
       </main>
       <Footer />
     </div>
